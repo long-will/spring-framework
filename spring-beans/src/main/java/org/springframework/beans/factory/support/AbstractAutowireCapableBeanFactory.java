@@ -335,6 +335,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		BeanWrapper bw = new BeanWrapperImpl(existingBean);
 		initBeanWrapper(bw);
 		populateBean(beanName, bd, bw);
+		/**
+		 * lcl
+		 * 最后一步初始化bean,会查找代理类，将通知通知放到目标的代理类上
+		 */
 		return initializeBean(beanName, existingBean, bd);
 	}
 
@@ -410,6 +414,13 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			throws BeansException {
 
 		Object result = existingBean;
+
+		/**
+		 * @Author lichenglong
+		 * @Description spring aop
+		 *       方法描述 ：查询当前beanFacoty所有的beanpostprocessor，执行所有bean的processBeforeBefore方法
+		 * @时间 2019/5/28 下午3:48
+		 **/
 		for (BeanPostProcessor processor : getBeanPostProcessors()) {
 			Object current = processor.postProcessBeforeInitialization(result, beanName);
 			if (current == null) {
@@ -1759,6 +1770,12 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	 * @see #applyBeanPostProcessorsAfterInitialization
 	 */
 	protected Object initializeBean(final String beanName, final Object bean, @Nullable RootBeanDefinition mbd) {
+		/**
+		 * @Author lichenglong
+		 * @Description spring aop
+		 * 		控制权限，方法权限
+		 * @时间 2019/5/28 下午3:22
+		 **/
 		if (System.getSecurityManager() != null) {
 			AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
 				invokeAwareMethods(beanName, bean);
@@ -1771,10 +1788,23 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		Object wrappedBean = bean;
 		if (mbd == null || !mbd.isSynthetic()) {
+
+			/**
+			 * @Author lichenglong
+			 * @Description spring aop
+			 *       方法描述 ： bean初始化，做一些操作
+			 * @时间 2019/5/28 下午3:30
+			 **/
 			wrappedBean = applyBeanPostProcessorsBeforeInitialization(wrappedBean, beanName);
 		}
-
 		try {
+
+			/**
+			 * @Author lichenglong
+			 * @Description spring aop
+			 *       方法描述 ： bean的初始化一些操作
+			 * @时间 2019/5/28 下午3:54
+			 **/
 			invokeInitMethods(beanName, wrappedBean, mbd);
 		}
 		catch (Throwable ex) {
@@ -1783,12 +1813,23 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 					beanName, "Invocation of init method failed", ex);
 		}
 		if (mbd == null || !mbd.isSynthetic()) {
+			/**
+			 * spring aop
+			 * lcl
+			 * 这是最后一步，将拦截器放到最后，执行目标类的时候，先执行拦截器
+			 */
 			wrappedBean = applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName);
 		}
 
 		return wrappedBean;
 	}
 
+	/**
+	 * @Author lichenglong
+	 * @Description spring aop
+	 *			主要根据bean类型来讲bean设置bean工厂，bean的加载上下文，或者beanName
+	 * @时间 2019/5/28 下午3:23
+	 **/
 	private void invokeAwareMethods(final String beanName, final Object bean) {
 		if (bean instanceof Aware) {
 			if (bean instanceof BeanNameAware) {

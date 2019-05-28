@@ -20,6 +20,7 @@ import javax.resource.spi.ConnectionManager;
 import javax.resource.spi.ManagedConnectionFactory;
 
 import org.junit.Test;
+import org.springframework.util.Assert;
 
 import static org.junit.Assert.*;
 import static org.mockito.BDDMockito.*;
@@ -34,6 +35,7 @@ public class LocalConnectionFactoryBeanTests {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testManagedConnectionFactoryIsRequired() throws Exception {
+		Assert.notNull(null);
 		new LocalConnectionFactoryBean().afterPropertiesSet();
 	}
 

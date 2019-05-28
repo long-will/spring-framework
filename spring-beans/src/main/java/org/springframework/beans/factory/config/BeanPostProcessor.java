@@ -81,6 +81,13 @@ public interface BeanPostProcessor {
 	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet
 	 * @see org.springframework.beans.factory.FactoryBean
 	 */
+
+	/**
+	 * @Author lichenglong
+	 * @Description spring aop
+	 *       方法描述 ：实现这个接口，可以在bean实例化完之后做一些操作
+	 * @时间 2019/5/28 下午3:35
+	 **/
 	@Nullable
 	default Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
 		return bean;

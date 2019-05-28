@@ -2225,6 +2225,10 @@ public class DefaultListableBeanFactoryTests {
 		assertTrue(tb.wasDestroyed());
 	}
 
+	/**
+	 * 这里面默认有的一步去配置目标类的通知方法的
+	 * lcl
+	 */
 	@Test
 	public void testConfigureBean() {
 		DefaultListableBeanFactory lbf = new DefaultListableBeanFactory();

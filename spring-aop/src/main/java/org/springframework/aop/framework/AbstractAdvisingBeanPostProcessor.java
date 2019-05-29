@@ -61,35 +61,49 @@ public abstract class AbstractAdvisingBeanPostProcessor extends ProxyProcessorSu
 		return bean;
 	}
 
+
+	/**
+	 * @Author lichenglong
+	 * @Description spring aop
+	 *       方法描述 ：aop，spring aop在初始化之后做的事情；
+	 * @时间 2019/5/29 下午3:20
+	 **/
 	@Override
 	public Object postProcessAfterInitialization(Object bean, String beanName) {
 		if (this.advisor == null || bean instanceof AopInfrastructureBean) {
 			// Ignore AOP infrastructure such as scoped proxies.
 			return bean;
 		}
-
+		// 判断1、如果bean本身是通知类的bean,加上advisor直接返回
 		if (bean instanceof Advised) {
 			Advised advised = (Advised) bean;
 			if (!advised.isFrozen() && isEligible(AopUtils.getTargetClass(bean))) {
 				// Add our local Advisor to the existing proxy's Advisor chain...
-				if (this.beforeExistingAdvisors) {
+				if (this.beforeExistingAdvisors) { //如果不存在
 					advised.addAdvisor(0, this.advisor);
 				}
-				else {
+				else {//advisedSupport 这个方法
 					advised.addAdvisor(this.advisor);
 				}
 				return bean;
 			}
 		}
-
+		// 判断2、如果bean本身是是在当前的类维护的，使用代理工厂来返回代理bean
 		if (isEligible(bean, beanName)) {
+
+			/**
+			 * @Author lichenglong
+			 * @Description spring aop
+			 *       方法描述 ： 代理工厂出现的地方
+			 * @时间 2019/5/29 下午3:50
+			 **/
 			ProxyFactory proxyFactory = prepareProxyFactory(bean, beanName);
 			if (!proxyFactory.isProxyTargetClass()) {
 				evaluateProxyInterfaces(bean.getClass(), proxyFactory);
 			}
 			proxyFactory.addAdvisor(this.advisor);
 			customizeProxyFactory(proxyFactory);
-			return proxyFactory.getProxy(getProxyClassLoader());
+			return proxyFactory.getProxy(getProxyClassLoader());//返回代理bean
 		}
 
 		// No proxy needed.
@@ -123,6 +137,13 @@ public abstract class AbstractAdvisingBeanPostProcessor extends ProxyProcessorSu
 	 * @see AopUtils#canApply(Advisor, Class)
 	 */
 	protected boolean isEligible(Class<?> targetClass) {
+
+		/**
+		 * @Author lichenglong
+		 * @Description spring aop
+		 *       方法描述 ： 这边判断，目标类是否是符合切面规则
+		 * @时间 2019/5/29 下午4:05
+		 **/
 		Boolean eligible = this.eligibleBeans.get(targetClass);
 		if (eligible != null) {
 			return eligible;

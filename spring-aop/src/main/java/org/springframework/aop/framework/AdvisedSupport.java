@@ -354,6 +354,12 @@ public class AdvisedSupport extends ProxyConfig implements Advised {
 		}
 	}
 
+	/**
+	 * @Author lichenglong
+	 * @Description spring aop
+	 *       方法描述 ： 将advisor通知器加到List数组当中
+	 * @时间 2019/5/29 下午3:45
+	 **/
 	private void addAdvisorInternal(int pos, Advisor advisor) throws AopConfigException {
 		Assert.notNull(advisor, "Advisor must not be null");
 		if (isFrozen()) {

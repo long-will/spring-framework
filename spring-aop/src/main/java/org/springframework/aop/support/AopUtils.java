@@ -221,12 +221,20 @@ public abstract class AopUtils {
 	 * for this bean includes any introductions
 	 * @return whether the pointcut can apply on any method
 	 */
+	
+	/**
+	 * @Author lichenglong
+	 * @Description spring aop 
+	 *       方法描述 ： 切面的通知
+	 * @时间 2019/5/29 下午4:10
+	 **/
 	public static boolean canApply(Pointcut pc, Class<?> targetClass, boolean hasIntroductions) {
 		Assert.notNull(pc, "Pointcut must not be null");
+		//1-0 判断切面的类拦截是否匹配目标类
 		if (!pc.getClassFilter().matches(targetClass)) {
 			return false;
 		}
-
+		//1-1 方法匹配器
 		MethodMatcher methodMatcher = pc.getMethodMatcher();
 		if (methodMatcher == MethodMatcher.TRUE) {
 			// No need to iterate the methods if we're matching any method anyway...
@@ -243,7 +251,7 @@ public abstract class AopUtils {
 			classes.add(ClassUtils.getUserClass(targetClass));
 		}
 		classes.addAll(ClassUtils.getAllInterfacesForClassAsSet(targetClass));
-
+		// 1-2 方法如何匹配的
 		for (Class<?> clazz : classes) {
 			Method[] methods = ReflectionUtils.getAllDeclaredMethods(clazz);
 			for (Method method : methods) {
@@ -281,11 +289,21 @@ public abstract class AopUtils {
 	 * @return whether the pointcut can apply on any method
 	 */
 	public static boolean canApply(Advisor advisor, Class<?> targetClass, boolean hasIntroductions) {
+
+		/**
+		 * @Author lichenglong
+		 * @Description spring aop
+		 *       方法描述 ： 这里面会有一块判断这个切面和类的拦截规则是否匹配这一块
+		 * @时间 2019/5/29 下午4:06
+		 **/
+		// 1-0 advisor是IntroductionAdvisor
 		if (advisor instanceof IntroductionAdvisor) {
 			return ((IntroductionAdvisor) advisor).getClassFilter().matches(targetClass);
 		}
+		// 1-1 advisor是切面Advisor
 		else if (advisor instanceof PointcutAdvisor) {
 			PointcutAdvisor pca = (PointcutAdvisor) advisor;
+			// 1-2 匹配类，匹配方法
 			return canApply(pca.getPointcut(), targetClass, hasIntroductions);
 		}
 		else {

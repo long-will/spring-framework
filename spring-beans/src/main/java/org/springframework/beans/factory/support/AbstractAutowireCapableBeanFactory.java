@@ -418,7 +418,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		/**
 		 * @Author lichenglong
 		 * @Description spring aop
-		 *       方法描述 ：查询当前beanFacoty所有的beanpostprocessor，执行所有bean的processBeforeBefore方法
+		 *       方法描述 ：查询当前beanFacoty所有的beanpostprocessor，执行所有bean工厂的的processBeforeBefore方法
 		 * @时间 2019/5/28 下午3:48
 		 **/
 		for (BeanPostProcessor processor : getBeanPostProcessors()) {
@@ -431,12 +431,26 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		return result;
 	}
 
+	/**
+	 * @Author lichenglong
+	 * @Description spring aop
+	 *       方法描述 ： aop拦截注册也在这个里面
+	 * @时间 2019/5/29 下午3:13
+	 **/
 	@Override
 	public Object applyBeanPostProcessorsAfterInitialization(Object existingBean, String beanName)
 			throws BeansException {
 
 		Object result = existingBean;
 		for (BeanPostProcessor processor : getBeanPostProcessors()) {
+
+			/**
+			 * @Author lichenglong
+			 * @Description spring aop
+			 *       方法描述 ： BeanPostProcessor里面的一些操作，使用 AbstractAdvisingBeanPostProcessor，来做切面加入的原bean中
+			 *
+			 * @时间 2019/5/29 下午4:03
+			 **/
 			Object current = processor.postProcessAfterInitialization(result, beanName);
 			if (current == null) {
 				return result;
@@ -1769,6 +1783,12 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	 * @see #invokeInitMethods
 	 * @see #applyBeanPostProcessorsAfterInitialization
 	 */
+	/**
+	 * @Author lichenglong
+	 * @Description spring aop
+	 *       方法描述 ： beanFactory工厂,初始化方法
+	 * @时间 2019/5/29 下午3:10
+	 **/
 	protected Object initializeBean(final String beanName, final Object bean, @Nullable RootBeanDefinition mbd) {
 		/**
 		 * @Author lichenglong
@@ -1783,6 +1803,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			}, getAccessControlContext());
 		}
 		else {
+			// aop 1-1  做下初始化bean的准备工作
 			invokeAwareMethods(beanName, bean);
 		}
 
@@ -1792,7 +1813,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			/**
 			 * @Author lichenglong
 			 * @Description spring aop
-			 *       方法描述 ： bean初始化，做一些操作
+			 *       方法描述 ： 2-0 bean初始化之前，做一些操作，初始化的准备工作，主要执行ProcessBeforeInitialization
 			 * @时间 2019/5/28 下午3:30
 			 **/
 			wrappedBean = applyBeanPostProcessorsBeforeInitialization(wrappedBean, beanName);
@@ -1802,7 +1823,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			/**
 			 * @Author lichenglong
 			 * @Description spring aop
-			 *       方法描述 ： bean的初始化一些操作
+			 *       方法描述：3-0 bean的初始化一些操作
 			 * @时间 2019/5/28 下午3:54
 			 **/
 			invokeInitMethods(beanName, wrappedBean, mbd);
@@ -1815,7 +1836,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		if (mbd == null || !mbd.isSynthetic()) {
 			/**
 			 * spring aop
-			 * lcl
+			 * lcl  4-0
 			 * 这是最后一步，将拦截器放到最后，执行目标类的时候，先执行拦截器
 			 */
 			wrappedBean = applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName);
@@ -1888,6 +1909,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			if (StringUtils.hasLength(initMethodName) &&
 					!(isInitializingBean && "afterPropertiesSet".equals(initMethodName)) &&
 					!mbd.isExternallyManagedInitMethod(initMethodName)) {
+				// 1-0 调用常用初始化方法
 				invokeCustomInitMethod(beanName, bean, mbd);
 			}
 		}
@@ -1903,6 +1925,12 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	protected void invokeCustomInitMethod(String beanName, final Object bean, RootBeanDefinition mbd)
 			throws Throwable {
 
+		/**
+		 * @Author lichenglong
+		 * @Description spring aop
+		 *       方法描述 ：1-0 使用初始化方法，去反射调用bean，然后得到具体的结果
+		 * @时间 2019/5/29 下午3:12
+		 **/
 		String initMethodName = mbd.getInitMethodName();
 		Assert.state(initMethodName != null, "No init method set");
 		final Method initMethod = (mbd.isNonPublicAccessAllowed() ?
@@ -1945,6 +1973,13 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		else {
 			try {
 				ReflectionUtils.makeAccessible(initMethod);
+
+				/**
+				 * @Author lichenglong
+				 * @Description spring aop
+				 *       方法描述 ： 2.0 调用反射bean初始化方法
+				 * @时间 2019/5/29 下午4:00
+				 **/
 				initMethod.invoke(bean);
 			}
 			catch (InvocationTargetException ex) {

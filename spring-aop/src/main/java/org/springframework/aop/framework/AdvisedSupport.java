@@ -58,6 +58,13 @@ import org.springframework.util.CollectionUtils;
  * @author Juergen Hoeller
  * @see org.springframework.aop.framework.AopProxy
  */
+
+ /**
+  * @Author lichenglong
+  * @Description spring aop
+  *       方法描述 ： 包装目标类的对象
+  * @时间 2019/6/3 下午6:04
+  **/
 public class AdvisedSupport extends ProxyConfig implements Advised {
 
 	/** use serialVersionUID from Spring 2.0 for interoperability. */

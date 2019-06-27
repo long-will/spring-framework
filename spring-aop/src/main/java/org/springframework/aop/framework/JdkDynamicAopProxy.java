@@ -206,6 +206,13 @@ final class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializa
 				retVal = AopUtils.invokeJoinpointUsingReflection(target, method, argsToUse);
 			}
 			else {
+
+				/**
+				 * @Author lichenglong
+				 * @Description spring aop
+				 *       方法描述 ： 这里面调用的时候，没有发现有前置后置调用
+				 * @时间 2019/6/4 下午6:34
+				 **/
 				// We need to create a method invocation...
 				invocation = new ReflectiveMethodInvocation(proxy, target, method, args, targetClass, chain);
 				// Proceed to the joinpoint through the interceptor chain.

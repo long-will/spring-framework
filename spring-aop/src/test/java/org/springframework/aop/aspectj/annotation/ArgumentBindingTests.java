@@ -39,6 +39,10 @@ import static org.junit.Assert.*;
  */
 public class ArgumentBindingTests {
 
+	/**
+	 * 列举以下关键字，然后在看之前将关键字看一下，可以将属性也列举以下；
+	 * lcl 阅读源码需要注意的点
+	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void testBindingInPointcutUsedByAdvice() {
 		TestBean tb = new TestBean();

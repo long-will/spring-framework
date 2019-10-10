@@ -44,13 +44,47 @@ public class MethodInvocationTests {
 		is.add(new MethodInterceptor() {
 			@Override
 			public Object invoke(MethodInvocation invocation) throws Throwable {
-				return returnValue;
+				System.out.println("---方法拦截器---");
+				return "1234";
 			}
 		});
 			ReflectiveMethodInvocation invocation = new ReflectiveMethodInvocation(proxy, null, //?
 		m, null, null, is // list
 	);
 		Object rv = invocation.proceed();
+		assertTrue("correct response", rv == returnValue);
+	}
+
+	class ObjectTest{
+		public void test1(){
+			System.out.println("....开始测试...test1..");
+		}
+	}
+	/**
+	 * 自定义拦截器，来测试下MehtodInterceptor方法
+	 * @throws Throwable
+	 */
+	@Test
+	public void testMethodInterceptor() throws Throwable {
+		Method m = ObjectTest.class.getMethod("test1");
+		//JdkDynamicAopProxy proxy = new JdkDynamicAopProxy();
+		Object singletonTarget = AopProxyUtils.getSingletonTarget(ObjectTest.class);
+		Object proxy = new Object();
+		final Object returnValue = new Object();
+		List<Object> is = new LinkedList<>();
+		is.add(new MethodInterceptor() {
+			@Override
+			public Object invoke(MethodInvocation invocation) throws Throwable {
+				System.out.println("---方法拦截器---");
+				return ObjectTest.class;
+			}
+		});
+		ReflectiveMethodInvocation invocation = new ReflectiveMethodInvocation(singletonTarget, null, //?
+		m, null, ObjectTest.class, is // list
+	);
+		Object rv = invocation.proceed();
+		System.out.println(rv);
+		m.invoke(ObjectTest.class,null);
 		assertTrue("correct response", rv == returnValue);
 	}
 

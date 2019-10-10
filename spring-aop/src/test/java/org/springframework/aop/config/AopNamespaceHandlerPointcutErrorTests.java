@@ -22,6 +22,7 @@ import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.parsing.BeanDefinitionParsingException;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
+import org.springframework.core.io.ClassPathResource;
 
 import static org.junit.Assert.*;
 import static org.springframework.tests.TestResourceUtils.*;
@@ -49,8 +50,8 @@ public class AopNamespaceHandlerPointcutErrorTests {
 	public void testMissingPointcutConfig() {
 		try {
 			DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-			new XmlBeanDefinitionReader(bf).loadBeanDefinitions(
-					qualifiedResource(getClass(), "pointcutMissing.xml"));
+			ClassPathResource resource = qualifiedResource(getClass(), "pointcutMissing.xml");
+			new XmlBeanDefinitionReader(bf).loadBeanDefinitions(resource);
 			fail("parsing should have caused a BeanDefinitionStoreException");
 		}
 		catch (BeanDefinitionStoreException ex) {

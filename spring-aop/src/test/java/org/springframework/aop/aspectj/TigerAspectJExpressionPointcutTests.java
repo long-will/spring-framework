@@ -195,6 +195,18 @@ public class TigerAspectJExpressionPointcutTests {
 		assertFalse(anySpringMethodAnnotation.matches(BeanA.class.getMethod("setName", String.class), BeanA.class));
 	}
 
+	/**
+	 * test 测试原生的class类
+	 * @throws Exception
+	 */
+	@Test
+	public void testOriginClass() throws Exception{
+		Method setName = BeanA.class.getMethod("setName", String.class);
+		Method getAge = BeanA.class.getMethod("getAge");
+		System.out.println(setName);
+		System.out.println(getAge);
+	}
+
 	@Test
 	public void testAnnotationOnMethodArgumentsWithFQN() throws Exception {
 		String expression = "@args(*, test.annotation.EmptySpringAnnotation))";

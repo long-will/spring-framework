@@ -17,6 +17,8 @@
 package org.springframework.aop.aspectj;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
@@ -29,10 +31,13 @@ import org.junit.Test;
 import org.springframework.aop.ClassFilter;
 import org.springframework.aop.MethodMatcher;
 import org.springframework.aop.Pointcut;
+import org.springframework.aop.framework.AdvisedSupport;
+import org.springframework.aop.framework.JdkDynamicAopProxy;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.tests.sample.beans.IOther;
 import org.springframework.tests.sample.beans.ITestBean;
+import org.springframework.tests.sample.beans.Person;
 import org.springframework.tests.sample.beans.TestBean;
 import org.springframework.tests.sample.beans.subpkg.DeepBean;
 
@@ -78,6 +83,53 @@ public class AspectJExpressionPointcutTests {
 		assertFalse("Should not be a runtime match", methodMatcher.isRuntime());
 		assertMatchesGetAge(methodMatcher);
 		assertFalse("Expression should match setAge() method", methodMatcher.matches(setAge, TestBean.class));
+	}
+
+	/**
+	 * 测试list的索引
+	 */
+	@Test
+	public void test123(){
+		List list = new ArrayList<>();
+		list.add("123");
+		list.add("234");
+		list.add("456");
+		System.out.println(0x7fffffff);
+		System.out.println(10 << 1);
+	}
+	interface Person{
+
+	}
+	class xiaoming implements Person {
+		int age;
+		String name;
+
+		public int getAge() {
+			return age;
+		}
+
+		public void setAge(int age) {
+			this.age = age;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+	}
+
+	@Test
+	public void testJdkDynamicProxyTest(){
+		xiaoming target = new xiaoming();
+		AdvisedSupport config = new AdvisedSupport(Person.class);
+		config.setTarget(target);
+		JdkDynamicAopProxy proxy = new JdkDynamicAopProxy(config);
+		Object proxy1 = proxy.getProxy();
+		System.out.println(proxy1 instanceof xiaoming);
+		System.out.println(proxy1 instanceof Person);
 	}
 
 	@Test

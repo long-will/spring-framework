@@ -117,7 +117,10 @@ class PointcutWithAnnotationArgument {
 class NamedPointcutWithArgs {
 
 	@Pointcut("execution(* *(..)) && args(s,..)")
-	public void pointcutWithArgs(String s) {}
+	public void pointcutWithArgs(String s) {
+		System.out.println("切面执行");
+
+	}
 
 	@Around("pointcutWithArgs(aString)")
 	public Object doAround(ProceedingJoinPoint pjp, String aString) throws Throwable {

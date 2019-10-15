@@ -29,6 +29,12 @@ import org.junit.Test;
  */
 public class AspectJAdviceParameterNameDiscoverAnnotationTests extends AspectJAdviceParameterNameDiscovererTests {
 
+	/**
+	 * 附加名称发现
+	 * Class 是Object子类，类型；一般用于反射，可以通过其他类型的元数据，比如字段，属性，构造器，方法等；不能通过new实例化；
+	 * Object 对象
+	 * class 关键字
+	 */
 	@Test
 	public void testAnnotationBinding() {
 		assertParameterNames(getMethod("pjpAndAnAnnotation"),

@@ -40,6 +40,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.springframework.aop.MethodMatcher;
 import test.aop.DefaultLockable;
 import test.aop.Lockable;
 import test.aop.PerTargetAspect;
@@ -107,6 +108,7 @@ public abstract class AbstractAspectJAdvisorFactoryTests {
 		TestBean target = new TestBean();
 		int realAge = 65;
 		target.setAge(realAge);
+		//创建代理 ：
 		TestBean itb = (TestBean) createProxy(target,
 				getFixture().getAdvisors(new SingletonMetadataAwareAspectInstanceFactory(new PerTargetAspect(), "someBean")),
 				TestBean.class);
@@ -115,7 +117,9 @@ public abstract class AbstractAspectJAdvisorFactoryTests {
 		Advised advised = (Advised) itb;
 		ReflectiveAspectJAdvisorFactory.SyntheticInstantiationAdvisor sia =
 				(ReflectiveAspectJAdvisorFactory.SyntheticInstantiationAdvisor) advised.getAdvisors()[1];
-		assertTrue(sia.getPointcut().getMethodMatcher().matches(TestBean.class.getMethod("getSpouse"), null));
+		//LCL 方法匹配器
+		MethodMatcher methodMatcher = sia.getPointcut().getMethodMatcher();
+		assertTrue(methodMatcher.matches(TestBean.class.getMethod("getSpouse"), null));
 		InstantiationModelAwarePointcutAdvisorImpl imapa = (InstantiationModelAwarePointcutAdvisorImpl) advised.getAdvisors()[3];
 		LazySingletonAspectInstanceFactoryDecorator maaif =
 				(LazySingletonAspectInstanceFactoryDecorator) imapa.getAspectInstanceFactory();
@@ -507,6 +511,7 @@ public abstract class AbstractAspectJAdvisorFactoryTests {
 	}
 
 	protected Object createProxy(Object target, List<Advisor> advisors, Class<?>... interfaces) {
+		// LCL 使用工厂模式来创建代理，来创建代理工厂
 		ProxyFactory pf = new ProxyFactory(target);
 		if (interfaces.length > 1 || interfaces[0].isInterface()) {
 			pf.setInterfaces(interfaces);
